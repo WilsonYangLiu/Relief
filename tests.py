@@ -18,3 +18,5 @@ if __name__ == '__main__':
 	fs = ReliefF(n_features_to_keep=10)
 	fs.fit(data, labels)
 	data_trans = fs.transform(data)
+	
+	
