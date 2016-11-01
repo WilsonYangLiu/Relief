@@ -25,7 +25,7 @@ SOFTWARE.
 from __future__ import print_function
 import numpy as np
 from sklearn.neighbors import KDTree
-from sklearn.preprocessing import scale
+from sklearn.preprocessing import minmax_scale
 from scipy.spatial.distance import euclidean
 
 
@@ -74,13 +74,16 @@ class ReliefF(object):
 			index of near-miss in X
 		
 		"""
-		dist = 0
+		dist = 100000
 		idx = None
 		for i, s in enumerate(X):
 			tmp = euclidean(sample, s)
-			if tmp >= dist:
+			if tmp <= dist:
 				dist = tmp
 				idx = i
+		
+		if dist == 100000:
+			raise ValueError
 		
 		return idx
 
@@ -103,7 +106,7 @@ class ReliefF(object):
 
 		"""
 		if scaled:
-			X = scale( X, axis=1, with_mean=True, with_std=True, copy=True )
+			X = minmax_scale( X, feature_range=(0, 1), axis=0, copy=True)
 		
 		self.feature_scores = np.zeros(X.shape[1], dtype=np.float64)
 
@@ -117,6 +120,7 @@ class ReliefF(object):
 			tree = KDTree(X[select, :])
 			nh = tree.query(X[select, :], k=2, return_distance=False)[:, 1:]
 			nh = (nh.T[0]).tolist()
+			#print(nh)
 			
 			# calculate -diff(x, x_nh) for each feature of each sample 
 			# in the subset with label 'label'
@@ -130,6 +134,7 @@ class ReliefF(object):
 				for sample in X[select, :]:
 					nm.append(self._find_nm(sample, X[other_select, :] ) )
 					
+				#print(nm)
 				# calculate -diff(x, x_nm) for each feature of each sample in the subset 
 				# with label 'other_label'
 				nm_tmp = np.square(np.subtract(X[select, :], X[other_select, :][nm, :] ) ) * prob
@@ -137,6 +142,7 @@ class ReliefF(object):
 			
 			mat = np.add(nh_mat, nm_mat)
 			self.feature_scores += np.sum(mat, axis=0)
+			#print(self.feature_scores)
 			
 		# Compute indices of top features, cast scores to floating point.
 		self.top_features = np.argsort(self.feature_scores)[::-1]
