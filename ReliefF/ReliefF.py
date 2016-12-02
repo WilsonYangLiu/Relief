@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 # -*- coding: utf-8 -*-
 
 """
@@ -22,7 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from __future__ import print_function
 import numpy as np
 from sklearn.neighbors import KDTree
 from sklearn.preprocessing import minmax_scale

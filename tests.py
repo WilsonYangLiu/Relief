@@ -7,7 +7,7 @@ import csv, os
 import numpy as np
 
 if __name__ == '__main__':
-	os.chdir(r'E:/Project_ML/ReliefF')
+	#os.chdir(r'E:/Project_ML/ReliefF')
 
 	with open(r'data/liver.csv', 'rb') as csvfile:
 		spamreader = csv.reader(csvfile)
